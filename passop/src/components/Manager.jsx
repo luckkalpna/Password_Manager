@@ -8,10 +8,10 @@ const Manager = () => {
 
   useEffect(() => {
     let passwords = localStorage.getItem("passwords");
-    if(passwords){
-      setPasswordArray(JSON.parse(passwords))
+    if (passwords) {
+      setPasswordArray(JSON.parse(passwords));
     }
-  }, [])
+  }, []);
 
   const showPassword = () => {
     // alert("Show the password")
@@ -23,8 +23,8 @@ const Manager = () => {
   };
 
   const savePassword = () => {
-    setPasswordArray([...passwordArray, form])
-    localStorage.setItem("password", JSON.stringify([...passwordArray, form]))
+    setPasswordArray([...passwordArray, form]);
+    localStorage.setItem("password", JSON.stringify([...passwordArray, form]));
     console.log(passwordArray);
   };
 
@@ -99,6 +99,60 @@ const Manager = () => {
             ></lord-icon>
             Add Password
           </button>
+        </div>
+
+        <div className="passwords">
+          <h2 className="font-bold text-2xl py-4">Your passwords</h2>
+          {passwordArray.length === 0 && <div>No passwords to show</div>}
+          {passwordArray.length != 0 && 
+          <table className="w-full text-sm text-center text-white overflow-hidden rounded-md">
+            <thead className="text-xs text-white uppercase bg-green-700">
+              <tr>
+                <th scope="col" className="px-6 py-4">
+                  Product name
+                </th>
+                <th scope="col" className="px-6 py-4">
+                  Category
+                </th>
+                <th scope="col" className="px-6 py-4">
+                  Price
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-green-100">
+              <tr className="">
+                <th
+                  scope="row"
+                  className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
+                >
+                  Apple MacBook Pro 17"
+                </th>
+                <td className="px-6 py-4 text-gray-900">Laptop</td>
+                <td className="px-6 py-4 text-gray-900">$2999</td>
+              </tr>
+              <tr className="">
+                <th
+                  scope="row"
+                  className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
+                >
+                  Microsoft Surface Pro
+                </th>
+                <td className="px-6 py-4 text-gray-900">Laptop PC</td>
+                <td className="px-6 py-4 text-gray-900">$1999</td>
+              </tr>
+              <tr className="">
+                <th
+                  scope="row"
+                  className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
+                >
+                  Magic Mouse 2
+                </th>
+                <td className="px-6 py-4 text-gray-900">Accessories</td>
+                <td className="px-6 py-4 text-gray-900">$99</td>
+              </tr>
+            </tbody>
+          </table>
+          }
         </div>
       </div>
     </>
