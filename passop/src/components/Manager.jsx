@@ -1,17 +1,36 @@
-import React from "react";
-import { useRef } from "react";
+import React, { useEffect } from "react";
+import { useRef, useState } from "react";
 
 const Manager = () => {
-  const ref = useRef()
-  const showPassword = () =>{
-    // alert("Show the password")
-    if(ref.current.src.includes("icons/hidden.png")){
-      ref.current.src = "icons/eye.png";
+  const ref = useRef();
+  const [form, setForm] = useState({ site: "", username: "", password: "" });
+  const [passwordArray, setPasswordArray] = useState([]);
+
+  useEffect(() => {
+    let passwords = localStorage.getItem("passwords");
+    if(passwords){
+      setPasswordArray(JSON.parse(passwords))
     }
-    else{
+  }, [])
+
+  const showPassword = () => {
+    // alert("Show the password")
+    if (ref.current.src.includes("icons/hidden.png")) {
+      ref.current.src = "icons/eye.png";
+    } else {
       ref.current.src = "icons/hidden.png";
     }
-  }
+  };
+
+  const savePassword = () => {
+    setPasswordArray([...passwordArray, form])
+    localStorage.setItem("password", JSON.stringify([...passwordArray, form]))
+    console.log(passwordArray);
+  };
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
   return (
     <>
       <div className="absolute inset-0 -z-10 h-full w-full bg-green-50 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:14px_24px]">
@@ -30,36 +49,57 @@ const Manager = () => {
 
         <div className="text-black flex flex-col px-4 gap-8 items-center">
           <input
+            value={form.site}
+            onChange={handleChange}
             placeholder="Enter Website URL"
             className="rounded-full border border-green-500 w-full p-4 py-1"
             type="text"
+            name="site"
           />
           <div className="flex w-full justify-between gap-8">
             <input
-            placeholder="Enter username"
+              value={form.username}
+              onChange={handleChange}
+              placeholder="Enter username"
               className="rounded-full border border-green-500 w-full p-4 py-1"
               type="text"
+              name="username"
             />
             <div className="relative">
               <input
-            placeholder="Enter password"
-              className="rounded-full border border-green-500 w-full p-4 py-1"
-              type="text"
-            />
-            <span className="absolute right-[3px] top-[4px]" onClick={showPassword}>
-              <img ref={ref} className="p-1 cursor-pointer" width={26} src="/icons/eye.png" alt="show-icon" />
-            </span>
+                value={form.password}
+                onChange={handleChange}
+                placeholder="Enter password"
+                className="rounded-full border border-green-500 w-full p-4 py-1"
+                type="text"
+                name="password"
+              />
+              <span
+                className="absolute right-[3px] top-[4px]"
+                onClick={showPassword}
+              >
+                <img
+                  ref={ref}
+                  className="p-1 cursor-pointer"
+                  width={26}
+                  src="/icons/eye.png"
+                  alt="show-icon"
+                />
+              </span>
             </div>
           </div>
 
-        <button className="flex justify-center items-center bg-green-400 hover:bg-green-300 rounded-full px-8 py-2 w-fit border border-green-900">
-          <lord-icon
-            src="https://cdn.lordicon.com/efxgwrkc.json"
-            trigger="hover"
+          <button
+            onClick={savePassword}
+            className="flex justify-center items-center bg-green-400 hover:bg-green-300 rounded-full px-8 py-2 w-fit border border-green-900"
+          >
+            <lord-icon
+              src="https://cdn.lordicon.com/efxgwrkc.json"
+              trigger="hover"
             ></lord-icon>
-          Add Password
-        </button>
-            </div>
+            Add Password
+          </button>
+        </div>
       </div>
     </>
   );
