@@ -24,7 +24,7 @@ const Manager = () => {
 
   const savePassword = () => {
     setPasswordArray([...passwordArray, form]);
-    localStorage.setItem("password", JSON.stringify([...passwordArray, form]));
+    localStorage.setItem("passwords", JSON.stringify([...passwordArray, form]));
     console.log(passwordArray);
   };
 
@@ -109,50 +109,31 @@ const Manager = () => {
             <thead className="text-xs text-white uppercase bg-green-700">
               <tr>
                 <th scope="col" className="px-6 py-4">
-                  Product name
+                  Site
                 </th>
                 <th scope="col" className="px-6 py-4">
-                  Category
+                  Username
                 </th>
                 <th scope="col" className="px-6 py-4">
-                  Price
+                  Password
                 </th>
               </tr>
             </thead>
             <tbody className="bg-green-100">
-              <tr className="">
+              {passwordArray.map((item, index)=>{
+                return <tr key={index}>
                 <th
                   scope="row"
                   className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
-                >
-                  Apple MacBook Pro 17"
+                  >
+                  <a href={item.site} target="_blank" rel="noopener noreferrer">{item.site}</a>
                 </th>
-                <td className="px-6 py-4 text-gray-900">Laptop</td>
-                <td className="px-6 py-4 text-gray-900">$2999</td>
+                <td className="px-6 py-4 text-gray-900">{item.username}</td>
+                <td className="px-6 py-4 text-gray-900">{item.password}</td>
               </tr>
-              <tr className="">
-                <th
-                  scope="row"
-                  className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
-                >
-                  Microsoft Surface Pro
-                </th>
-                <td className="px-6 py-4 text-gray-900">Laptop PC</td>
-                <td className="px-6 py-4 text-gray-900">$1999</td>
-              </tr>
-              <tr className="">
-                <th
-                  scope="row"
-                  className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
-                >
-                  Magic Mouse 2
-                </th>
-                <td className="px-6 py-4 text-gray-900">Accessories</td>
-                <td className="px-6 py-4 text-gray-900">$99</td>
-              </tr>
+                })}
             </tbody>
-          </table>
-          }
+          </table>}
         </div>
       </div>
     </>
