@@ -3,6 +3,7 @@ import { useRef, useState } from "react";
 
 const Manager = () => {
   const ref = useRef();
+  const passwordRef = useRef()
   const [form, setForm] = useState({ site: "", username: "", password: "" });
   const [passwordArray, setPasswordArray] = useState([]);
 
@@ -15,10 +16,13 @@ const Manager = () => {
 
   const showPassword = () => {
     // alert("Show the password")
+    passwordRef.current.type = "text"
     if (ref.current.src.includes("icons/hidden.png")) {
       ref.current.src = "icons/eye.png";
+      passwordRef.current.type = "text"
     } else {
       ref.current.src = "icons/hidden.png";
+      passwordRef.current.type = "password"
     }
   };
 
@@ -67,11 +71,12 @@ const Manager = () => {
             />
             <div className="relative">
               <input
+              ref={passwordRef}
                 value={form.password}
                 onChange={handleChange}
                 placeholder="Enter password"
                 className="rounded-full border border-green-500 w-full p-4 py-1"
-                type="text"
+                type="password"
                 name="password"
               />
               <span
@@ -105,8 +110,8 @@ const Manager = () => {
           <h2 className="font-bold text-2xl py-4">Your passwords</h2>
           {passwordArray.length === 0 && <div>No passwords to show</div>}
           {passwordArray.length != 0 && 
-          <table className="w-full text-sm text-center text-white overflow-hidden rounded-md">
-            <thead className="text-xs text-white uppercase bg-green-700">
+          <table className="table-auto w-full overflow-hidden rounded-md">
+            <thead className="text-white uppercase bg-green-800">
               <tr>
                 <th scope="col" className="px-6 py-4">
                   Site
@@ -122,14 +127,17 @@ const Manager = () => {
             <tbody className="bg-green-100">
               {passwordArray.map((item, index)=>{
                 return <tr key={index}>
-                <th
+                <td
                   scope="row"
-                  className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
+                  className="py-2 border border-white text-center width-32"
                   >
                   <a href={item.site} target="_blank" rel="noopener noreferrer">{item.site}</a>
-                </th>
-                <td className="px-6 py-4 text-gray-900">{item.username}</td>
-                <td className="px-6 py-4 text-gray-900">{item.password}</td>
+                  <div className="cursor-pointer">
+                    <img src="/icons/copy.png" alt="copy-img" width={20}/>
+                  </div>
+                </td>
+                <td className="py-2 border border-white text-center width-32">{item.username}</td>
+                <td className="py-2 border border-white text-center width-32">{item.password}</td>
               </tr>
                 })}
             </tbody>
