@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useRef, useState } from "react";
-import { ToastContainer, toast } from 'react-toastify';
-// import 'react-toastify/dist/ReactTostify.css'
+import { ToastContainer, toast } from "react-toastify";
+import { v4 as uuidv4 } from 'uuid';
 
 const Manager = () => {
   const ref = useRef();
@@ -29,45 +29,57 @@ const Manager = () => {
   };
 
   const savePassword = () => {
-    setPasswordArray([...passwordArray, form]);
-    localStorage.setItem("passwords", JSON.stringify([...passwordArray, form]));
+    setPasswordArray([...passwordArray, {...form, id: uuidv4()}]);
+    localStorage.setItem("passwords", JSON.stringify([...passwordArray, {...form, id: uuidv4()}]));
     console.log(passwordArray);
+  };
+
+  const deletePassword = (id) => {
+    console.log("Your password is deleted. " + id)
+    setPasswordArray(passwordArray.filter(item=>item.id !== id));
+    localStorage.setItem("passwords", JSON.stringify(passwordArray.filter(item=>item.id !== id)));
+  };
+  
+  const editPassword = (id) => {
+    console.log("edit your password " + id)
+    setForm(passwordArray.filter(item=>item.id === id)[0]);
+    setPasswordArray(passwordArray.filter(item=>item.id !== id));
   };
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const copytext = (text) =>{
+  const copytext = (text) => {
     // alert("copied to clipboard " + text)
-    toast('copied to clipboard ' + text, {
-position: "top-right",
-autoClose: 5000,
-hideProgressBar: false,
-closeOnClick: false,
-pauseOnHover: true,
-draggable: true,
-progress: undefined,
-theme: "light",
-});
-    navigator.clipboard.writeText(text)
-  }
+    toast("copied to clipboard " + text, {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: false,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
+    navigator.clipboard.writeText(text);
+  };
   return (
     <>
-    <ToastContainer
-position="top-right"
-autoClose={5000}
-hideProgressBar={false}
-newestOnTop={false}
-closeOnClick={false}
-rtl={false}
-pauseOnFocusLoss
-draggable
-pauseOnHover
-theme="light"
-transition="Bounce"
-/>
-<ToastContainer />
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick={false}
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+        transition="Bounce"
+      />
+      <ToastContainer />
       <div className="absolute inset-0 -z-10 h-full w-full bg-green-50 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:14px_24px]">
         <div className="absolute left-0 right-0 top-0 -z-10 m-auto h-[310px] w-[310px] rounded-full bg-fuchsia-400 opacity-20 blur-[100px]"></div>
       </div>
@@ -127,13 +139,13 @@ transition="Bounce"
 
           <button
             onClick={savePassword}
-            className="flex justify-center items-center bg-green-400 hover:bg-green-300 rounded-full px-8 py-2 w-fit border border-green-900"
+            className="flex justify-center items-center bg-green-400 hover:bg-green-300 rounded-full px-8 py-2 w-fit border border-green-900 gap-1"
           >
             <lord-icon
               src="https://cdn.lordicon.com/efxgwrkc.json"
               trigger="hover"
             ></lord-icon>
-            Add Password
+              Save
           </button>
         </div>
 
@@ -153,6 +165,9 @@ transition="Bounce"
                   <th scope="col" className="px-6 py-4">
                     Password
                   </th>
+                  <th scope="col" className="px-6 py-4">
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody className="bg-green-100">
@@ -163,7 +178,12 @@ transition="Bounce"
                         scope="row"
                         className="py-2 border border-white text-center width-32"
                       >
-                        <div className="flex items-center justify-center gap-2" onClick={()=>{copytext(item.site)}}>
+                        <div
+                          className="flex items-center justify-center gap-2"
+                          onClick={() => {
+                            copytext(item.site);
+                          }}
+                        >
                           <a
                             href={item.site}
                             target="_blank"
@@ -181,28 +201,57 @@ transition="Bounce"
                         </div>
                       </td>
                       <td className="py-2 border border-white text-center width-32">
-                        <div className="flex items-center justify-center gap-2" onClick={()=>{copytext(item.username)}}>
-                        {item.username}
-                        <div className="cursor-pointer">
-                          <img
-                            src="/icons/copy.png"
-                            alt="copy-img"
-                            width={20}
-                          />
-                        </div>
+                        <div
+                          className="flex items-center justify-center gap-2"
+                          onClick={() => {
+                            copytext(item.username);
+                          }}
+                        >
+                          {item.username}
+                          <div className="cursor-pointer">
+                            <img
+                              src="/icons/copy.png"
+                              alt="copy-img"
+                              width={20}
+                            />
+                          </div>
                         </div>
                       </td>
                       <td className="py-2 border border-white text-center width-32">
-                        <div className="flex items-center justify-center gap-2" onClick={()=>{copytext(item.password)}}>
-                        {item.password}
-                        <div className="cursor-pointer">
-                          <img
-                            src="/icons/copy.png"
-                            alt="copy-img"
-                            width={20}
-                            style={{ marginLeft: "30px" }}
-                          />
+                        <div
+                          className="flex items-center justify-center gap-2"
+                          onClick={() => {
+                            copytext(item.password);
+                          }}
+                        >
+                          {item.password}
+                          <div className="cursor-pointer">
+                            <img
+                              src="/icons/copy.png"
+                              alt="copy-img"
+                              width={20}
+                              style={{ marginLeft: "30px" }}
+                            />
+                          </div>
                         </div>
+                      </td>
+                      <td className="py-2 border border-white text-center width-32">
+                        <div className="flex items-center justify-center gap-2">
+                          <span className="cursor-pointer" onClick={()=>{editPassword(item.id)}}>
+                            <lord-icon
+                              src="https://cdn.lordicon.com/exymduqj.json"
+                              trigger="hover"
+                              stroke="bold"
+                              style={{ width: "25px;", height: "25px" }}
+                            ></lord-icon>
+                          </span>
+                          <span className="cursor-pointer" onClick={()=>{deletePassword(item.id)}}>
+                            <lord-icon
+                              src="https://cdn.lordicon.com/xyfswyxf.json"
+                              trigger="hover"
+                              style={{ width: "25px;", height: "25px" }}
+                            ></lord-icon>
+                          </span>
                         </div>
                       </td>
                     </tr>
