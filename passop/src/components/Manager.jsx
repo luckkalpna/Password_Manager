@@ -9,11 +9,15 @@ const Manager = () => {
   const [form, setForm] = useState({ site: "", username: "", password: "" });
   const [passwordArray, setPasswordArray] = useState([]);
 
+  const getPasswords = async () =>{
+    let request = await fetch("http://localhost:3000/")
+    let passwords = await request.json();
+    console.log(passwords)
+    setPasswordArray(passwords)
+  }
+
   useEffect(() => {
-    let passwords = localStorage.getItem("passwords");
-    if (passwords) {
-      setPasswordArray(JSON.parse(passwords));
-    }
+    getPasswords();
   }, []);
 
   const showPassword = () => {
@@ -28,70 +32,54 @@ const Manager = () => {
     }
   };
 
-  const savePassword = () => {
-    if (
-      form.site.length > 3 &&
-      form.username.length > 3 &&
-      form.password.length > 3
-    ) {
-      setPasswordArray([...passwordArray, { ...form, id: uuidv4() }]);
-      localStorage.setItem(
-        "passwords",
-        JSON.stringify([...passwordArray, { ...form, id: uuidv4() }])
-      );
-      console.log(passwordArray);
-      setForm({ site: "", username: "", password: "" });
-      toast("Password saved!", {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: false,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-      });
-    } else {
-      toast("Error: Password not saved!", {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: false,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-      });
-    }
-  };
+  const savePassword = async () => {
+  if (
+    form.site.length > 3 &&
+    form.username.length > 3 &&
+    form.password.length > 3
+  ) {
+    await fetch("http://localhost:3000/", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: form.id }),
+    });
 
-  const deletePassword = (id) => {
-    console.log("Your password is deleted. " + id);
-    let c = confirm("Do you really want to delete this password?");
-    if (c) {
-      setPasswordArray(passwordArray.filter((item) => item.id !== id));
-      localStorage.setItem(
-        "passwords",
-        JSON.stringify(passwordArray.filter((item) => item.id !== id))
-      );
-      toast("Password Deleted!", {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: false,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-      });
-    }
-  };
+    const id = uuidv4();
+    const newPassword = { ...form, id };
+
+    setPasswordArray([...passwordArray, newPassword]);
+    await fetch("http://localhost:3000/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newPassword),
+    });
+
+    setForm({ site: "", username: "", password: "" });
+    toast("Password saved!", { position: "top-right", autoClose: 5000, theme: "dark" });
+  } else {
+    toast("Error: Password not saved!", { position: "top-right", autoClose: 5000, theme: "dark" });
+  }
+};
+
+  const deletePassword = async (id) => {
+  let c = confirm("Do you really want to delete this password?");
+  if (c) {
+    await fetch("http://localhost:3000/", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id }),
+    });
+
+    setPasswordArray(passwordArray.filter((item) => item.id !== id));
+    toast("Password Deleted!", { position: "top-right", autoClose: 5000, theme: "dark" });
+  }
+};
 
   const editPassword = (id) => {
-    console.log("edit your password " + id);
-    setForm(passwordArray.filter((item) => item.id === id)[0]);
-    setPasswordArray(passwordArray.filter((item) => item.id !== id));
-  };
+  const existing = passwordArray.find(item => item.id === id);
+  setForm(existing);
+  setPasswordArray(passwordArray.filter((item) => item.id !== id));
+};
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -270,10 +258,10 @@ const Manager = () => {
                         <div
                           className="flex items-center justify-center gap-2"
                           onClick={() => {
-                            copytext(item.password);
+                            copytext(item.password)
                           }}
                         >
-                          {item.password}
+                          {"*".repeat(item.password.length)}
                           <div className="cursor-pointer">
                             <img
                               src="/icons/copy.png"
